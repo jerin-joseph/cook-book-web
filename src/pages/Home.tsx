@@ -1,7 +1,7 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
-
+import CameraIcon from '@mui/icons-material/PhotoCamera';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -10,20 +10,32 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Footer from '../components/Footer';
 
+function Copyright() {
+  return (
+    <Typography variant="body2" color="text.secondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://mui.com/">
+        Your Website
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-
 
 export default function Home() {
   return (
     <div>
       <CssBaseline />
-  
       <main>
         {/* Hero unit */}
         <Box
@@ -44,7 +56,7 @@ export default function Home() {
               All Recipes
             </Typography>
             <Typography variant="h5" align="center" color="text.secondary" paragraph>
-              Cookbook offers all your favourite recipes organised at one place. Enjoy cooking!
+            Cookbook offers all your favourite recipes organised at one place. Enjoy cooking!
             </Typography>
             <Stack
               sx={{ pt: 4 }}
@@ -71,11 +83,11 @@ export default function Home() {
                       // 16:9
                       pt: '56.25%',
                     }}
-                    image="https://source.unsplash.com/random?wallpapers"
+                    image="https://source.unsplash.com/random?food"
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Typography gutterBottom variant="h5" component="h2">
-                      Chilly Chicken
+                    Chilly Chicken
                     </Typography>
                     <Typography>
                     Chilli chicken is a popular Indo-Chinese dish of chicken of Hakka Chinese heritage.
@@ -91,6 +103,7 @@ export default function Home() {
           </Grid>
         </Container>
       </main>
+      <Footer/>
     </div>
   );
 }

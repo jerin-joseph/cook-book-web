@@ -12,19 +12,16 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 import {Link as ReactLink} from 'react-router-dom';
 import Copyright from '../components/Copyright';
-import { useNavigate } from 'react-router-dom';
-
-
-// TODO remove, this demo shouldn't need to reset the theme.
 
 
 export default function SignIn() {
 
     const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
@@ -91,9 +88,7 @@ export default function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link variant="body2">
-                    <ReactLink to={"/signup"}> {"Don't have an account? Sign Up"} </ReactLink>
-                </Link>
+                    <Link component={ReactLink} variant="body2" to={"/signup"}> {"Don't have an account? Sign Up"} </Link>
               </Grid>
             </Grid>
           </Box>

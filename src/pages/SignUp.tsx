@@ -5,7 +5,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import {Link as ReactLink, useNavigate} from 'react-router-dom';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -14,14 +13,12 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Copyright from '../components/Copyright';
-
-// TODO remove, this demo shouldn't need to reset the theme.
-
+import {Link as ReactLink, useNavigate} from 'react-router-dom';
 
 
 export default function SignUp() {
     const navigate = useNavigate();
-  const handleSubmit = (event) => {
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
@@ -29,11 +26,9 @@ export default function SignUp() {
       password: data.get('password'),
     });
     navigate("/signin");
-
   };
 
   return (
-    
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -110,9 +105,11 @@ export default function SignUp() {
               Sign Up
             </Button>
             <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link  variant="body2">
-                    <ReactLink to={"/signin"}> Already have an account? Sign in </ReactLink>
+                <Grid item>
+                <Link  variant="body2" component={ReactLink} to={"/Signin"}>
+                    {/* <ReactLink to={"/signin"}> */}
+                         Already have an account? Sign in 
+                    {/* </ReactLink> */}
                 </Link>
               </Grid>
             </Grid>

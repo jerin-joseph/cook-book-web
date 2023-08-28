@@ -1,21 +1,19 @@
-import { useState } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import Home from './pages/Home'
-import SignUp from './pages/Signup'
-import PrimarySearchAppBar  from './components/AppBar'
-import SignIn from './pages/Signin';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Home from './pages/Home';
+import PrimarySearchAppBar  from './components/AppBar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp';
 
 function App() {
-
   const defaultTheme = createTheme({
     palette: {
         mode: 'dark',
       },
 });
-
+      
   return (
-    <div className='App'>
+      <div className='App'>
       <ThemeProvider theme={defaultTheme}>
       <BrowserRouter>
       <PrimarySearchAppBar/>
