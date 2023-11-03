@@ -14,7 +14,7 @@ export default function Footer() {
         color="text.secondary"
         component="p"
       >
-        Something here to give the footer a purpose!
+        `Created by RSOCLabs`
       </Typography>
       <Copyright />
     </Box>

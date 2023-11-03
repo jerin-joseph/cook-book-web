@@ -16,23 +16,25 @@ import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Footer from '../components/Footer';
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import axios from 'axios';
+import {useEffect,useState} from 'react';
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
+
 export default function Home() {
+
+const [recipeList,setRecipeList] = useState(null);
+
+useEffect(()=>{
+axios.get('http://api.cookbook.rsoclabs.com/recipes').then((response)=>{
+console.log(response);
+setRecipeList(response.data);
+}).catch(()=>{
+console.log("error in getting data from api")});
+},[]);
+
+
   return (
     <div>
       <CssBaseline />
@@ -72,8 +74,8 @@ export default function Home() {
         <Container sx={{ py: 8 }} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
-            {cards.map((card) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
+            {recipeList && recipeList.map((recipe) => (
+              <Grid item key={recipe.id} xs={12} sm={6} md={4}>
                 <Card
                   sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
                 >
@@ -87,10 +89,10 @@ export default function Home() {
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Typography gutterBottom variant="h5" component="h2">
-                    Chilly Chicken
+                    {recipe.name}
                     </Typography>
                     <Typography>
-                    Chilli chicken is a popular Indo-Chinese dish of chicken of Hakka Chinese heritage.
+                    {recipe.description}
                     </Typography>
                   </CardContent>
                   <CardActions>
