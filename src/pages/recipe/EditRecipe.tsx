@@ -26,7 +26,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CustomDialog from "../../components/Dialog";
 import Recipe from "../../types/RecipeType";
 
-const ShowRecipe = () => {
+const EditRecipe = () => {
   const navigate = useNavigate();
   let { id } = useParams<"id">();
   const [recipe, setRecipe] = useState<Recipe>({});
@@ -258,4 +258,4 @@ const ShowRecipe = () => {
     </Container>
   );
 };
-export default ShowRecipe;
+export default EditRecipe;

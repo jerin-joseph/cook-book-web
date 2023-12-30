@@ -1,7 +1,15 @@
-import { Button } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+} from "@mui/material";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import Recipe from "../../types/RecipeType";
+import YouTubeIcon from "@mui/icons-material/YouTube";
 
 const FetchRecipe = ({ setRecipe }) => {
   const [url, setUrl] = useState("");
@@ -32,11 +40,20 @@ const FetchRecipe = ({ setRecipe }) => {
 
   useEffect(() => {
     if (videoDetails) {
-      let desc = videoDetails.snippet.description;
-      let ingredients = desc
-        .split("INGREDIENTS")[1]
-        .split("\n\n")[0]
-        .split("\n");
+      let desc: string = videoDetails.snippet.description;
+      console.log("----description----" + desc);
+      let ingredients = [];
+      try {
+        console.log(desc.split(new RegExp("INGREDIENTS", "i")));
+
+        ingredients = desc
+          .split(new RegExp("INGREDIENTS", "i"))[1]
+          .split("\n\n")[0]
+          .split("\n");
+      } catch (error) {
+        console.log(error);
+      }
+
       ingredients = ingredients.map((item) => {
         item = item.split("-");
         return {
@@ -49,26 +66,54 @@ const FetchRecipe = ({ setRecipe }) => {
         name: videoDetails.snippet.title,
         description: description,
         ingredients: ingredients,
-        authorId: "",
-        instructions: "",
-        date: "",
+        authorId: 1,
+        authorName: videoDetails.snippet.channelTitle,
+        instructions: [],
+        date: videoDetails.snippet.publishedAt,
+        thumbnail: videoDetails.snippet.thumbnails.high.url,
+        videoURL: videoDetails.id,
       };
       setRecipe(temp);
     }
   }, [videoDetails]);
 
   return (
-    <div>
-      <div>fetchRecipe</div>
-      <label htmlFor="url">Youtube URL</label>
-      <input
-        type="text"
-        name="url"
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
-      />
-      <Button onClick={handleUrl}>Load</Button>
-    </div>
+    <FormControl fullWidth>
+      {/* <div>Load data from Youtube</div> */}
+      <Stack direction="row" alignItems="center" spacing={1}>
+        <TextField
+          name="url"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          placeholder="Example: https://www.youtube.com/watch?v=MyVidEoUrL"
+          fullWidth
+          label="Youtube video URL"
+          variant="filled"
+          helperText="Click on load button to fetch recipe details from youtube"
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  edge="end"
+                  size="small"
+                >
+                  <YouTubeIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+        <Button onClick={handleUrl} color="secondary">
+          Load
+        </Button>
+      </Stack>
+
+      {/* <label htmlFor="url"> Load Recipe details from Youtube</label>
+      <br />
+      <input type="text" />
+      <Button onClick={handleUrl}>Load</Button> */}
+    </FormControl>
   );
 };
 

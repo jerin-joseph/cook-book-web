@@ -24,8 +24,6 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import { Height } from "@mui/icons-material";
 import Recipe from "../types/RecipeType";
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
 export default function Home({ props }) {
   const [recipeList, setRecipeList] = useState(null);
 
@@ -103,6 +101,7 @@ export default function Home({ props }) {
                       height: "100%",
                       display: "flex",
                       flexDirection: "column",
+                      // maxHeight: "30rem",
                     }}
                     onClick={() => {
                       handleClick(recipe);
@@ -114,7 +113,12 @@ export default function Home({ props }) {
                         // 16:9
                         pt: "56.25%",
                       }}
-                      image="https://source.unsplash.com/random?food"
+                      // image="https://source.unsplash.com/random?food"
+                      image={
+                        recipe.thumbnail
+                          ? recipe.thumbnail
+                          : "https://source.unsplash.com/random?food"
+                      }
                     />
                     <CardContent sx={{ flexGrow: 1 }}>
                       <Typography gutterBottom variant="h5" component="h2">
