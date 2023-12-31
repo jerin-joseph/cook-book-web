@@ -19,17 +19,21 @@ import EditIcon from "@mui/icons-material/Edit";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CustomDialog from "../../components/Dialog";
 import Recipe from "../../types/RecipeType";
+import { TextField } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
+import ClearIcon from "@mui/icons-material/Clear";
+import IngredientList from "../../components/IngredientsList";
+import InstructionsList from "../../components/InstructionsList";
 
 const ShowRecipe = () => {
   const navigate = useNavigate();
-  let { id } = useParams<"id">();
+  const { id } = useParams<"id">();
   const [recipe, setRecipe] = useState<Recipe>({});
+  const [tempRecipe, setTempRecipe] = useState<Recipe>({});
+  const [editMode, setEditMode] = useState(false);
   useEffect(() => {
     axios
       // .get("http://api.cookbook.rsoclabs.com/recipes")
@@ -37,11 +41,16 @@ const ShowRecipe = () => {
       .then((response) => {
         console.log(response.data);
         setRecipe(response.data);
+        // setTempRecipe(response.data);
       })
       .catch(() => {
         console.log("error in getting data from api");
       });
   }, []);
+
+  //   useEffect(() => {
+  //     console.log(recipe, tempRecipe);
+  //   }, [recipe, tempRecipe, editMode]);
 
   const [openConfirm, setOpenConfirm] = React.useState(false);
 
@@ -67,14 +76,44 @@ const ShowRecipe = () => {
       });
   };
 
-  // return (
-  //   <Container component="main" maxWidth="xs">
-  //     <CssBaseline />
-  //     <div>
-  //       <div>{recipe ? recipe.name : ""}</div>
-  //     </div>
-  //   </Container>
-  // );
+  function handleEditMode() {
+    console.log("In edit mode");
+    setEditMode(true);
+    setTempRecipe(structuredClone(recipe));
+  }
+
+  function handleSave() {
+    console.log("saving updated recipe", recipe, tempRecipe);
+    axios
+      .put("http://localhost:8080/recipe", tempRecipe)
+      .then(function (response) {
+        console.log(response);
+        //   navigate(`/recipe/${response.data.id}`);
+        setEditMode(false);
+        console.log("save successful");
+        setRecipe(tempRecipe);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+  function handleClear() {
+    console.log(
+      "before Cancel > not saving updated recipe",
+      "recipe",
+      recipe,
+      "temp",
+      tempRecipe
+    );
+    setEditMode(false);
+    console.log(
+      "after Cancel > not saving updated recipe",
+      "recipe",
+      recipe,
+      "temp",
+      tempRecipe
+    );
+  }
 
   return (
     <Container component="main" maxWidth="lg" sx={{ padding: "3rem" }}>
@@ -85,15 +124,53 @@ const ShowRecipe = () => {
           //   sx={{ marginBottom: "0px", zIndex: "100" }}
           action={
             <CardActions disableSpacing>
-              <IconButton aria-label="edit">
-                <EditIcon />
-              </IconButton>
-              <IconButton aria-label="delete" onClick={handleConfirmDialogOpen}>
-                <DeleteIcon />
-              </IconButton>
+              {editMode ? (
+                <>
+                  <IconButton aria-label="edit" onClick={handleClear}>
+                    <ClearIcon />
+                  </IconButton>
+                  <IconButton aria-label="edit" onClick={handleSave}>
+                    <SaveIcon />
+                  </IconButton>
+                </>
+              ) : (
+                <>
+                  <IconButton aria-label="edit" onClick={handleEditMode}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    aria-label="delete"
+                    onClick={handleConfirmDialogOpen}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </>
+              )}
             </CardActions>
           }
-          title={recipe?.name}
+          //   title={<>{recipe?.name}</>}
+          title={
+            editMode ? (
+              <TextField
+                required
+                id="standard-required"
+                // placeholder="Recipe Title"
+                fullWidth
+                label="Recipe Title"
+                InputLabelProps={{ shrink: tempRecipe.name?.length > 0 }}
+                name="name"
+                value={tempRecipe?.name}
+                onChange={(e) =>
+                  setTempRecipe({ ...tempRecipe, name: e.target.value })
+                }
+                variant="standard"
+                margin="dense"
+              />
+            ) : (
+              <>{recipe?.name}</>
+            )
+          }
+
           //   subheader="September 14, 2016"
         />
 
@@ -114,7 +191,7 @@ const ShowRecipe = () => {
                 ? recipe?.thumbnail
                 : "https://source.unsplash.com/random?food"
             }
-            alt="Paella dish"
+            alt="Dish"
           />
         )}
 
@@ -151,9 +228,29 @@ const ShowRecipe = () => {
           ]}
         />
         <CardContent>
-          <Typography variant="body2" color="text.secondary">
-            {recipe?.description}
-          </Typography>
+          {editMode ? (
+            <TextField
+              required
+              type="text"
+              label="Description"
+              InputLabelProps={{ shrink: tempRecipe.description?.length > 0 }}
+              fullWidth
+              name="description"
+              // defaultValue={recipe.description}
+              // placeholder="Description"
+              value={tempRecipe?.description}
+              onChange={(e) =>
+                setTempRecipe({ ...tempRecipe, description: e.target.value })
+              }
+              multiline
+              variant="standard"
+              margin="dense"
+            />
+          ) : (
+            <Typography variant="body2" color="text.secondary">
+              {recipe?.description}
+            </Typography>
+          )}
         </CardContent>
         <CardContent>
           <Accordion>
@@ -165,41 +262,29 @@ const ShowRecipe = () => {
               <Typography>Ingredients</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <List
-                sx={{
-                  width: "100%",
-                  //   maxWidth: "80%",
-                  // paddingLeft: "10%",
-                  //   maxHeight: "10rem",
-                  //   overflow: "scroll",
-                }}
-                dense={true}
-              >
-                {recipe?.ingredients?.map(
-                  (value, index) =>
-                    value && (
-                      <ListItem
-                        key={index}
-                        disableGutters
-                        //   secondaryAction={
-                        //     <IconButton aria-label="comment">
-                        //       <DeleteIcon
-                        //         onClick={() => {
-                        //           deleteIngredient(index);
-                        //         }}
-                        //       />
-                        //     </IconButton>
-                        //   }
-                      >
-                        <ListItemText
-                          primary={`${index + 1}. ${value.ingName} - ${
-                            value.ingQty
-                          }`}
-                        />
-                      </ListItem>
-                    )
-                )}
-              </List>
+              {editMode ? (
+                <IngredientList
+                  ingredients={tempRecipe?.ingredients}
+                  editMode={editMode}
+                  recipe={tempRecipe}
+                  setRecipe={setTempRecipe}
+                  //   addIngredient={addIngredient}
+                  //   deleteIngredient={deleteIngredient}
+                  //   setNewIngName={setNewIngName}
+                  //   setNewIngQty={setNewIngQty}
+                />
+              ) : (
+                <IngredientList
+                  ingredients={recipe?.ingredients}
+                  editMode={editMode}
+                  recipe={recipe}
+                  setRecipe={setRecipe}
+                  //   addIngredient={addIngredient}
+                  //   deleteIngredient={deleteIngredient}
+                  //   setNewIngName={setNewIngName}
+                  //   setNewIngQty={setNewIngQty}
+                />
+              )}
             </AccordionDetails>
           </Accordion>
           <Accordion>
@@ -211,48 +296,21 @@ const ShowRecipe = () => {
               <Typography>Preparation Steps</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <List
-                sx={{
-                  width: "100%",
-                  //   maxWidth: "80%",
-                  // paddingLeft: "10%",
-                  //   maxHeight: "10rem",
-                  //   overflow: "scroll",
-                }}
-                dense={true}
-              >
-                {recipe?.instructions?.map(
-                  (value, index) =>
-                    value && (
-                      <ListItem
-                        key={index}
-                        disableGutters
-                        //   secondaryAction={
-                        //     <IconButton aria-label="comment">
-                        //       <DeleteIcon
-                        //         onClick={() => {
-                        //           deleteIngredient(index);
-                        //         }}
-                        //       />
-                        //     </IconButton>
-                        //   }
-                      >
-                        <ListItemText primary={`${index + 1}. ${value}`} />
-                      </ListItem>
-                    )
-                )}
-              </List>
+              {editMode ? (
+                <InstructionsList
+                  editMode={editMode}
+                  recipe={tempRecipe}
+                  setRecipe={setTempRecipe}
+                />
+              ) : (
+                <InstructionsList
+                  editMode={editMode}
+                  recipe={recipe}
+                  setRecipe={setRecipe}
+                />
+              )}
             </AccordionDetails>
           </Accordion>
-          {/* <Accordion disabled>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel3a-content"
-              id="panel3a-header"
-            >
-              <Typography>Disabled Accordion</Typography>
-            </AccordionSummary>
-          </Accordion> */}
         </CardContent>
       </Card>
     </Container>

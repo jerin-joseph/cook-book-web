@@ -17,10 +17,10 @@ function AddRecipe() {
   const navigate = useNavigate();
   const [recipe, setRecipe] = useState({});
   const [newIngName, setNewIngName] = useState("");
-  const [newInstruction, setNewInsName] = useState("");
   const [newIngQty, setNewIngQty] = useState("");
-  const [ingredientsList, setIngredientsList] = useState([]);
-  const [instructionsList, setInstructionsList] = useState([]);
+  const [newInstruction, setNewInstruction] = useState("");
+  // const [ingredientsList, setIngredientsList] = useState([]);
+  // const [instructionsList, setInstructionsList] = useState([]);
   useEffect(() => {
     console.log(recipe);
   }, [recipe]);
@@ -61,14 +61,6 @@ function AddRecipe() {
     setRecipe({ ...recipe, ingredients: ingredientslist });
   }
 
-  function deleteInstruction(index: number) {
-    let instructionsList: [] = recipe?.instuctions;
-    console.log(instructionsList, index);
-    instructionsList.splice(index, 1);
-    console.log(instructionsList);
-    setRecipe({ ...recipe, instructions: instructionsList });
-  }
-
   function addIngredient(e) {
     e.preventDefault();
     console.log(newIngName);
@@ -84,6 +76,14 @@ function AddRecipe() {
     }
   }
 
+  function deleteInstruction(index: number) {
+    let instructionsList: [] = recipe?.instructions;
+    console.log(instructionsList, index);
+    instructionsList.splice(index, 1);
+    console.log(instructionsList);
+    setRecipe({ ...recipe, instructions: instructionsList });
+  }
+
   function addInstruction(e) {
     e.preventDefault();
     console.log(newIngName);
@@ -93,7 +93,7 @@ function AddRecipe() {
         instructionsList = recipe?.instructions;
       }
       instructionsList.push(newInstruction);
-      setNewInsName("");
+      setNewInstruction("");
       setRecipe({ ...recipe, instructions: instructionsList });
     } else {
       console.log("instruction empty");
@@ -286,7 +286,7 @@ function AddRecipe() {
               name="description"
               // defaultValue={recipe.description}
               // placeholder="Description"
-              onChange={(e) => setNewInsName(e.target.value)}
+              onChange={(e) => setNewInstruction(e.target.value)}
               variant="standard"
               margin="dense"
             />
