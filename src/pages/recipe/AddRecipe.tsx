@@ -2,16 +2,12 @@ import { Button, FormControl, Stack, TextField } from "@mui/material";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import FetchRecipe from "./fetchRecipe";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import DeleteIcon from "@mui/icons-material/Delete";
-import IconButton from "@mui/material/IconButton";
 import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
-import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+import IngredientList from "../../components/IngredientsList";
+import InstructionsList from "../../components/InstructionsList";
 
 function AddRecipe() {
   const navigate = useNavigate();
@@ -41,6 +37,9 @@ function AddRecipe() {
     // };
     console.log(formObject);
     console.log("recipe________", recipe);
+    if (!recipe.authorName) {
+      recipe.authorName = "CB Author";
+    }
     axios
       // .post("http://api.cookbook.rsoclabs.com/recipe", recipe)
       .post("http://localhost:8080/recipe", recipe)
@@ -164,136 +163,20 @@ function AddRecipe() {
 
         <FormControl fullWidth={true} margin="dense">
           {/* <label>Ingredients</label> */}
-
-          <List
-            sx={{
-              width: "100%",
-              maxWidth: "80%",
-              paddingLeft: "10%",
-              // maxHeight: "10rem",
-              // overflow: "scroll",
-            }}
-            dense={true}
-          >
-            {recipe?.ingredients?.map(
-              (value, index) =>
-                value && (
-                  <ListItem
-                    key={index}
-                    disableGutters
-                    secondaryAction={
-                      <IconButton aria-label="comment" size="small">
-                        <DeleteIcon
-                          onClick={() => {
-                            deleteIngredient(index);
-                          }}
-                        />
-                      </IconButton>
-                    }
-                  >
-                    <ListItemText
-                      primary={`${index + 1}. ${value.ingName} - ${
-                        value.ingQty
-                      }`}
-                    />
-                  </ListItem>
-                )
-            )}
-          </List>
-          {/* <input
-            type="text"
-            name="ingName"
-            onChange={(e) => setNewIngName(e.target.value)}
-            placeholder="Item"
+          <IngredientList
+            ingredients={recipe?.ingredients}
+            editMode={true}
+            recipe={recipe}
+            setRecipe={setRecipe}
           />
-          <input
-            type="text"
-            name="ingQty"
-            onChange={(e) => setNewIngQty(e.target.value)}
-            placeholder="Quantity"
-          />
-          <button onClick={addIngredient}>Add Ingredient</button> */}
-
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <TextField
-              variant="standard"
-              sx={{ width: "70%" }}
-              type="text"
-              name="ingName"
-              placeholder="Ingredient"
-              onChange={(e) => setNewIngName(e.target.value)}
-            />
-            <TextField
-              variant="standard"
-              sx={{ width: "25%" }}
-              placeholder="Qty"
-              onChange={(e) => setNewIngQty(e.target.value)}
-            />
-            {/* <Button
-              sx={{ width: "25%" }}
-              color="primary"
-              onClick={addIngredient}
-            >
-              Add
-            </Button> */}
-            <IconButton aria-label="Add" size="medium" onClick={addIngredient}>
-              <PlaylistAddIcon fontSize="inherit" />
-            </IconButton>
-          </Stack>
         </FormControl>
 
         <FormControl fullWidth={true} margin="dense">
-          {/* <label>Instructions</label>
-          <input type="text" name="instructions" /> */}
-
-          <List
-            sx={{
-              width: "100%",
-              maxWidth: "80%",
-              paddingLeft: "10%",
-              // maxHeight: "10rem",
-              // overflow: "scroll",
-            }}
-            dense={true}
-          >
-            {recipe?.instructions?.map(
-              (value: string, index: number) =>
-                value && (
-                  <ListItem
-                    key={index}
-                    disableGutters
-                    secondaryAction={
-                      <IconButton aria-label="comment">
-                        <DeleteIcon
-                          onClick={() => {
-                            deleteInstruction(index);
-                          }}
-                        />
-                      </IconButton>
-                    }
-                  >
-                    <ListItemText primary={`${index + 1}. ${value}`} />
-                  </ListItem>
-                )
-            )}
-          </List>
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <TextField
-              type="text"
-              placeholder="Preparation Steps"
-              InputLabelProps={{ shrink: recipe.instructions?.length > 0 }}
-              fullWidth
-              name="description"
-              // defaultValue={recipe.description}
-              // placeholder="Description"
-              onChange={(e) => setNewInstruction(e.target.value)}
-              variant="standard"
-              margin="dense"
-            />
-            <IconButton aria-label="Add" size="medium" onClick={addInstruction}>
-              <PlaylistAddIcon fontSize="inherit" />
-            </IconButton>
-          </Stack>
+          <InstructionsList
+            editMode={true}
+            recipe={recipe}
+            setRecipe={setRecipe}
+          />
         </FormControl>
         <FormControl fullWidth={true} margin="dense">
           <Stack direction="row" alignItems="center" spacing={1} width="100%">
